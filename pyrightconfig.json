@@ -1,0 +1,10 @@
+{
+  "pythonPath": "/Users/ccso/CascadeProjects/tracking-tool-app/venv/bin/python",
+  "venvPath": "/Users/ccso/CascadeProjects/tracking-tool-app/venv",
+  "venv": "venv",
+  "extraPaths": [
+    "/Users/ccso/CascadeProjects/tracking-tool-app/venv/lib/python3.9/site-packages"
+  ],
+  "reportMissingImports": false,
+  "reportMissingModuleSource": false
+} 

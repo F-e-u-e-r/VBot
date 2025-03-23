@@ -1,0 +1,418 @@
+{% extends "base.html" %}
+
+{% block title %}Tracking Results{% endblock %}
+
+{% block extra_css %}
+<style>
+    .table-responsive {
+        overflow-x: auto;
+        margin-bottom: 1.5rem;
+        width: 100%;
+        display: block;
+        -webkit-overflow-scrolling: touch;
+        border-radius: 0.5rem;
+    }
+    
+    .table th {
+        white-space: nowrap;
+        background-color: #f8f9fa;
+        font-weight: 600;
+        padding: 1rem;
+        font-size: 16px;
+    }
+    
+    .data-table {
+        min-width: 900px;
+        width: 100%;
+        margin-bottom: 0;
+        table-layout: fixed;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+    
+    .tag-content {
+        font-family: monospace;
+        background-color: #f8f9fa;
+        padding: 0.75rem;
+        border-radius: 4px;
+        border: 1px solid #dee2e6;
+        margin-bottom: 0.5rem;
+        position: relative;
+        font-size: 12px;
+        word-break: break-all;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+    
+    .tag-content:hover {
+        background-color: #e9ecef;
+    }
+    
+    .tag-content.copied {
+        background-color: #d4edda;
+        border-color: #c3e6cb;
+    }
+    
+    .highlight {
+        background-color: #fff3cd;
+    }
+    
+    .nav-fixed {
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        background-color: white;
+        padding: 1rem 0;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    
+    .section-title {
+        font-size: 20px;
+        margin-bottom: 1rem;
+    }
+    
+    .copy-tooltip {
+        position: absolute;
+        right: 10px;
+        top: 10px;
+        color: #6c757d;
+        font-size: 14px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="mb-4 d-flex justify-content-between">
+    <a href="{{ url_for('tracking_tool') }}" class="btn btn-outline-secondary d-flex align-items-center" style="width: fit-content;">
+        <i class="bi bi-arrow-left me-2"></i>
+        <span>Back to Upload</span>
+    </a>
+    <a href="https://vpon365-my.sharepoint.com/:x:/g/personal/eric_so_vpon_com/EVskXPdoOExLshm869SyY8YBterSLNmZ0icGK0XxuV5udA?e=ayp5Q8" class="btn btn-outline-success d-flex align-items-center" style="width: fit-content;" target="_blank">
+        <i class="bi bi-file-earmark-excel me-2"></i>
+        <span>Excel version</span>
+    </a>
+</div>
+
+<div class="container mt-4">
+    <div class="card mb-4">
+        <div class="card-header">
+            <h2 class="card-title h4 mb-0">File Details</h2>
+        </div>
+        <div class="card-body">
+            <p><strong>Filename:</strong> {{ uploaded_file.original_filename }}</p>
+            <p><strong>Uploaded:</strong> {{ uploaded_file.uploaded_at.strftime('%Y-%m-%d %H:%M:%S') }}</p>
+        </div>
+    </div>
+
+    {% if tracking_items %}
+    <div class="card mb-4">
+        <div class="card-header">
+            <h2 class="card-title h4 mb-0">Converted Tracking Data</h2>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped data-table">
+                    <colgroup>
+                        <col style="width: 200px;">
+                        <col style="width: 200px;">
+                        <col style="width: 200px;">
+                        <col style="width: 400px;">
+                        <col style="width: 400px;">
+                        <col style="width: 400px;">
+                    </colgroup>
+                    <thead>
+                        <tr>
+                            <th>Placement Name</th>
+                            <th>Ad Name</th>
+                            <th>Creative Name</th>
+                            <th>Impression Tag (image)</th>
+                            <th>Click Tag</th>
+                            <th>3rd Party Tracking</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in tracking_items %}
+                        <tr>
+                            <td>{{ item.placement_name }}</td>
+                            <td>{{ item.ad_name }}</td>
+                            <td>{{ item.creative_name }}</td>
+                            <td>
+                                {% if item.imp_tag_converted %}
+                                <div class="tag-content" data-content="{{ item.imp_tag_converted }}">
+                                    {{ item.imp_tag_converted }}
+                                    <span class="copy-tooltip"><i class="fas fa-copy"></i></span>
+                                </div>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if item.click_tag_converted %}
+                                <div class="tag-content" data-content="{{ item.click_tag_converted }}">
+                                    {{ item.click_tag_converted }}
+                                    <span class="copy-tooltip"><i class="fas fa-copy"></i></span>
+                                </div>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if item.third_party_converted %}
+                                <div class="tag-content" data-content="{{ item.third_party_converted }}">
+                                    {{ item.third_party_converted }}
+                                    <span class="copy-tooltip"><i class="fas fa-copy"></i></span>
+                                </div>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title h4 mb-0">Excel Raw Data</h2>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped data-table">
+                    <colgroup>
+                        <col style="width: 200px;">
+                        <col style="width: 200px;">
+                        <col style="width: 200px;">
+                        <col style="width: 400px;">
+                        <col style="width: 400px;">
+                        <col style="width: 400px;">
+                    </colgroup>
+                    <thead>
+                        <tr>
+                            <th>Placement Name</th>
+                            <th>Ad Name</th>
+                            <th>Creative Name</th>
+                            <th>Impression Tag (image)</th>
+                            <th>Click Tag</th>
+                            <th>3rd Party Tracking</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in tracking_items %}
+                        <tr>
+                            <td>{{ item.placement_name }}</td>
+                            <td>{{ item.ad_name }}</td>
+                            <td>{{ item.creative_name }}</td>
+                            <td>
+                                {% if item.imp_tag %}
+                                <div class="tag-content" data-content="{{ item.imp_tag }}">
+                                    {{ item.imp_tag }}
+                                    <span class="copy-tooltip"><i class="fas fa-copy"></i></span>
+                                </div>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if item.click_tag %}
+                                <div class="tag-content" data-content="{{ item.click_tag }}">
+                                    {{ item.click_tag }}
+                                    <span class="copy-tooltip"><i class="fas fa-copy"></i></span>
+                                </div>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if item.third_party_tracking %}
+                                <div class="tag-content" data-content="{{ item.third_party_tracking }}">
+                                    {{ item.third_party_tracking }}
+                                    <span class="copy-tooltip"><i class="fas fa-copy"></i></span>
+                                </div>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="alert alert-info">
+        <p>No tracking data found for this file.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add click-to-copy functionality
+        document.querySelectorAll('.tag-content').forEach(function(element) {
+            element.addEventListener('click', function() {
+                const content = this.getAttribute('data-content');
+                navigator.clipboard.writeText(content).then(() => {
+                    // Visual feedback
+                    this.classList.add('copied');
+                    
+                    // Show notification
+                    const notification = document.createElement('div');
+                    notification.className = 'alert alert-success notification';
+                    notification.innerHTML = '<i class="fas fa-check-circle me-2"></i>Copied to clipboard!';
+                    notification.style.position = 'fixed';
+                    notification.style.bottom = '20px';
+                    notification.style.right = '20px';
+                    notification.style.zIndex = '9999';
+                    notification.style.borderRadius = '4px';
+                    notification.style.padding = '10px 20px';
+                    notification.style.boxShadow = '0 2px 10px rgba(0,0,0,0.1)';
+                    document.body.appendChild(notification);
+                    
+                    // Reset copied style after a delay
+                    setTimeout(() => {
+                        this.classList.remove('copied');
+                    }, 1500);
+                    
+                    // Remove notification after delay
+                    setTimeout(() => {
+                        notification.style.opacity = '0';
+                        notification.style.transition = 'opacity 0.5s';
+                        setTimeout(() => {
+                            document.body.removeChild(notification);
+                        }, 500);
+                    }, 2000);
+                });
+            });
+        });
+        
+        // Apply highlighting for duplicate entries if more than one row
+        const rows = document.querySelectorAll('.data-table tbody tr');
+        if (rows.length > 1) {
+            // Apply highlighting to tables
+            highlightDuplicates();
+            highlightDifferences();
+        }
+        
+        function highlightDuplicates() {
+            const tables = document.querySelectorAll('.data-table');
+            
+            tables.forEach(table => {
+                // Only process tables with more than one row
+                const tableRows = table.querySelectorAll('tbody tr');
+                if (tableRows.length <= 1) return;
+                
+                const patterns = {
+                    'display': /display/i,
+                    'video': /video/i,
+                    'audio': /audio/i,
+                    'native': /native/i,
+                    'animated': /animated/i,
+                    'static': /static/i,
+                    'html5': /html5/i,
+                };
+                
+                tableRows.forEach(row => {
+                    const placementCell = row.cells[0];
+                    const adNameCell = row.cells[1];
+                    const creativeCell = row.cells[2];
+                    
+                    // Process each cell
+                    [placementCell, adNameCell, creativeCell].forEach(cell => {
+                        const text = cell.textContent;
+                        let highlightedText = text;
+                        
+                        // Apply highlighting based on patterns
+                        for (const [key, pattern] of Object.entries(patterns)) {
+                            if (pattern.test(text)) {
+                                highlightedText = highlightedText.replace(
+                                    pattern,
+                                    match => `<span class="highlight">${match}</span>`
+                                );
+                            }
+                        }
+                        
+                        if (highlightedText !== text) {
+                            cell.innerHTML = highlightedText;
+                        }
+                    });
+                });
+            });
+        }
+
+        function highlightDifferences() {
+            const tables = document.querySelectorAll('.data-table');
+            
+            tables.forEach(table => {
+                // Only process tables with more than one row
+                const tableRows = table.querySelectorAll('tbody tr');
+                if (tableRows.length <= 1) return;
+                
+                // For each column (0=Placement, 1=Ad Name, 2=Creative)
+                for (let colIndex = 0; colIndex < 3; colIndex++) {
+                    // Get all text values for this column
+                    const columnValues = [];
+                    tableRows.forEach(row => {
+                        columnValues.push(row.cells[colIndex].textContent.trim());
+                    });
+                    
+                    // Find differences by tokenizing the values
+                    const tokenizedValues = columnValues.map(value => {
+                        // Split by common delimiters
+                        return value.split(/[-_\s]/).filter(token => token.length > 0);
+                    });
+                    
+                    // Find unique tokens in each position
+                    const uniqueTokensByPosition = {};
+                    
+                    // For each tokenized value
+                    tokenizedValues.forEach(tokens => {
+                        // For each position in the tokenized value
+                        tokens.forEach((token, position) => {
+                            if (!uniqueTokensByPosition[position]) {
+                                uniqueTokensByPosition[position] = new Set();
+                            }
+                            uniqueTokensByPosition[position].add(token);
+                        });
+                    });
+                    
+                    // Find positions with multiple unique values
+                    const positionsWithDifferences = [];
+                    for (const [position, uniqueTokens] of Object.entries(uniqueTokensByPosition)) {
+                        if (uniqueTokens.size > 1) {
+                            positionsWithDifferences.push(parseInt(position));
+                        }
+                    }
+                    
+                    // Highlight the differences in each row
+                    tableRows.forEach((row, rowIndex) => {
+                        const cell = row.cells[colIndex];
+                        const text = cell.textContent.trim();
+                        const tokens = text.split(/[-_\s]/).filter(token => token.length > 0);
+                        
+                        let highlightedText = text;
+                        let lastIndex = 0;
+                        
+                        // For positions with differences, highlight those tokens
+                        positionsWithDifferences.forEach(position => {
+                            if (position < tokens.length) {
+                                const token = tokens[position];
+                                const tokenIndex = highlightedText.indexOf(token, lastIndex);
+                                
+                                if (tokenIndex !== -1) {
+                                    // Replace only this instance of the token
+                                    highlightedText = 
+                                        highlightedText.substring(0, tokenIndex) + 
+                                        `<span class="highlight">${token}</span>` + 
+                                        highlightedText.substring(tokenIndex + token.length);
+                                    
+                                    // Update lastIndex to after this replacement
+                                    lastIndex = tokenIndex + `<span class="highlight">${token}</span>`.length;
+                                }
+                            }
+                        });
+                        
+                        if (highlightedText !== text) {
+                            cell.innerHTML = highlightedText;
+                        }
+                    });
+                }
+            });
+        }
+    });
+</script>
+{% endblock %} 

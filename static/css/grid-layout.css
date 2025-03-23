@@ -1,0 +1,241 @@
+/* Grid layout for tools */
+.tools-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+@media (max-width: 992px) {
+    .tools-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 576px) {
+    .tools-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.tool-card {
+    border: 1px solid #dee2e6;
+    border-radius: 0.25rem;
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.tool-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.tool-card-active {
+    border-color: #007bff;
+}
+
+.tool-card-inactive {
+    opacity: 0.7;
+    filter: grayscale(0.7);
+}
+
+.tool-card-img {
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+}
+
+.tool-card-body {
+    padding: 1rem;
+    text-align: center;
+}
+
+.tool-card-title {
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Sidebar toggle - using consistent styling from style.css */
+.sidebar-toggle {
+    position: absolute;
+    top: 10px;
+    right: -17px;
+    z-index: 1010;
+    background: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 50%;
+    width: 34px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #333;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    overflow: visible;
+}
+
+.sidebar-toggle:hover {
+    background: #f8f9fa;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
+    transform: translateX(3px);
+}
+
+.sidebar-toggle:active {
+    transform: translateX(0) scale(0.95);
+}
+
+.sidebar-toggle i {
+    transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    font-size: 16px;
+    margin-left: -1px;
+}
+
+.sidebar.collapsed .sidebar-toggle i {
+    transform: rotate(180deg);
+}
+
+/* Arrow glow effect on hover */
+.sidebar-toggle:hover i {
+    color: #007bff;
+}
+
+.sidebar {
+    width: 250px;
+    transition: width 0.3s ease-in-out, transform 0.3s ease-in-out;
+    overflow-x: hidden;
+    position: relative; /* Ensure relative positioning */
+    margin: 0;
+    border-top: none;
+}
+
+.sidebar.collapsed {
+    width: 50px;
+}
+
+.sidebar .nav-link {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: padding 0.3s ease-in-out;
+}
+
+.sidebar.collapsed .nav-link {
+    padding: 0.5rem;
+    text-align: center;
+}
+
+.sidebar.collapsed .nav-link i {
+    margin-right: 0;
+}
+
+.sidebar.collapsed .nav-link-text {
+    opacity: 0;
+    width: 0;
+    display: none;
+}
+
+/* Tooltip for collapsed sidebar */
+.sidebar.collapsed .nav-item {
+    position: relative;
+}
+
+.sidebar.collapsed .nav-item:hover::after {
+    content: attr(data-title);
+    position: absolute;
+    left: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: #333;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 4px;
+    white-space: nowrap;
+    z-index: 1000;
+    font-size: 0.875rem;
+}
+
+/* Content area transitions */
+main {
+    transition: margin-left 0.3s ease-in-out, width 0.3s ease-in-out;
+    margin-left: 250px;
+}
+
+main.sidebar-collapsed {
+    margin-left: 50px;
+}
+
+/* Center content when sidebar is collapsed */
+.content-container {
+    transition: padding 0.3s ease-in-out;
+    padding: 0 1rem;
+}
+
+.sidebar-collapsed ~ .content-container {
+    padding: 0 2rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .sidebar {
+        transform: translateX(-100%);
+    }
+    
+    .sidebar.show {
+        transform: translateX(0);
+    }
+    
+    main {
+        margin-left: 0;
+    }
+    
+    main.sidebar-collapsed {
+        margin-left: 0;
+    }
+    
+    /* Adjust sidebar toggle position on mobile */
+    .sidebar-toggle {
+        right: 10px;
+        top: 10px;
+        border-radius: 4px;
+        width: 28px;
+        height: 28px;
+    }
+    
+    .sidebar-toggle i {
+        font-size: 14px;
+    }
+}
+
+/* Footer transitions */
+.footer {
+    transition: margin-left 0.3s ease-in-out, width 0.3s ease-in-out;
+}
+
+.footer.sidebar-expanded {
+    margin-left: 250px;
+    width: calc(100% - 250px);
+}
+
+.footer.sidebar-collapsed {
+    margin-left: 50px;
+    width: calc(100% - 50px);
+}
+
+/* Toast notification positioning */
+.toast-container {
+    position: fixed;
+    bottom: 1rem;
+    right: 1rem;
+    z-index: 1100;
+}
+
+/* Login message color */
+.login-message {
+    color: #000;
+}
