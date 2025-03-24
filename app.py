@@ -16,6 +16,7 @@ from flask_apscheduler import APScheduler
 import pandas as pd
 import logging
 from werkzeug.security import generate_password_hash
+from functools import wraps
 
 from models import db, migrate
 from models.user import User
@@ -171,11 +172,24 @@ def register_error_handlers(app):
     def not_found_error(error):
         return render_template('errors/404.html'), 404
     
+    @app.errorhandler(403)
+    def forbidden_error(error):
+        return render_template('errors/403.html'), 403
+    
     @app.errorhandler(500)
     def internal_error(error):
         db.session.rollback()
         app.logger.error(f"Server error: {str(error)}")
         return render_template('errors/500.html'), 500
+
+# Add a decorator for admin-only routes
+def admin_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not current_user.is_authenticated or not current_user.is_admin():
+            abort(403)  # Forbidden
+        return f(*args, **kwargs)
+    return decorated_function
 
 def register_routes(app, limiter):
     """
@@ -243,6 +257,75 @@ def register_routes(app, limiter):
     def index():
         """Render application home page."""
         return render_template('index.html', title='Home')
+    
+    # Admin routes
+    @app.route('/admin/users', methods=['GET'])
+    @login_required
+    @admin_required
+    def admin_users():
+        """Admin page to manage users."""
+        users = User.query.all()
+        return render_template('admin_users.html', users=users)
+    
+    @app.route('/admin/users/add', methods=['POST'])
+    @login_required
+    @admin_required
+    def admin_add_user():
+        """Add a new user."""
+        username = request.form.get('username')
+        email = request.form.get('email')
+        password = request.form.get('password')
+        role = request.form.get('role')
+        
+        # Validate inputs
+        if not username or not email or not password:
+            flash('All fields are required', 'danger')
+            return redirect(url_for('admin_users'))
+        
+        # Check if user exists
+        if User.query.filter_by(username=username).first():
+            flash(f'User {username} already exists', 'danger')
+            return redirect(url_for('admin_users'))
+        
+        # Create new user
+        new_user = User(
+            username=username,
+            email=email,
+            role=role
+        )
+        new_user.password = password  # This will hash the password
+        
+        try:
+            db.session.add(new_user)
+            db.session.commit()
+            flash(f'User {username} created successfully', 'success')
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Error creating user: {str(e)}', 'danger')
+        
+        return redirect(url_for('admin_users'))
+    
+    @app.route('/admin/users/<int:user_id>/remove', methods=['POST'])
+    @login_required
+    @admin_required
+    def admin_remove_user(user_id):
+        """Remove a user."""
+        user = User.query.get_or_404(user_id)
+        
+        # Prevent removing yourself
+        if user.id == current_user.id:
+            flash('You cannot remove your own account', 'danger')
+            return redirect(url_for('admin_users'))
+        
+        try:
+            db.session.delete(user)
+            db.session.commit()
+            flash(f'User {user.username} removed successfully', 'success')
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Error removing user: {str(e)}', 'danger')
+        
+        return redirect(url_for('admin_users'))
     
     # Tracking tool routes
     @app.route('/tracking-tool', methods=['GET', 'POST'])
