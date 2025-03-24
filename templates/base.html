@@ -90,6 +90,10 @@
                             <i class="bi bi-person-circle"></i> {{ current_user.username }}
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="adminDropdown">
+                            {% if current_user.is_admin() %}
+                            <li><a class="dropdown-item" href="{{ url_for('admin_users') }}">User Management</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            {% endif %}
                             <li><a class="dropdown-item" href="{{ url_for('logout') }}">Logout</a></li>
                         </ul>
                     </div>
