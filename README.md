@@ -1,143 +1,112 @@
-# Tracking Tool
+# VBot - Tracking Tool Web Application
 
-A web application for tracking and processing Excel files with data validation, built with Flask and modern best practices.
+A Flask-based web application for tracking and processing Excel file data.
 
 ## Features
 
-- User authentication system with account locking and role-based access
-- Excel file upload (.xlsx/.xls) with intelligent header detection
-- Data validation and transformation
-- Responsive design for mobile and desktop
-- Dockerized deployment with Nginx and PostgreSQL
-- Comprehensive logging and error handling
-- Service-oriented architecture
-- Environment-specific configuration
+- User authentication with admin and regular user roles
+- Web-based user management for administrators
+- Excel file upload and validation
+- Data processing and visualization
+- RESTful API endpoints for accessing tracking data
+- Command-line utilities for user management
 
-## Project Structure
+## Installation
 
-```
-tracking-tool/
-├── app.py                 # Main application file
-├── config.py              # Configuration settings
-├── forms.py               # WTForms definitions
-├── logging_config.py      # Centralized logging configuration
-├── manage.py              # CLI commands for database operations
-├── run.py                 # Application entry point with enhanced error handling
-├── utils.py               # Utility functions
-├── docker-compose.yml     # Docker Compose configuration
-├── Dockerfile             # Docker container definition
-├── models/                # Database models
-│   ├── __init__.py        # Database initialization
-│   ├── user.py            # User model
-│   └── tracking.py        # Tracking data models
-├── services/              # Service layer
-│   ├── __init__.py         
-│   └── tracking_service.py # Business logic for tracking operations
-├── static/                # Static assets
-│   ├── css/               # Stylesheets
-│   ├── js/                # JavaScript
-│   └── images/            # Images and icons
-├── templates/             # HTML templates
-├── nginx/                 # Nginx configuration
-│   └── conf.d/            # Server configuration
-├── tests/                 # Test suite
-├── logs/                  # Application logs (created at runtime)
-└── uploads/               # Upload directory (created at runtime)
-```
+### Prerequisites
 
-## Setup and Installation
+- Python 3.8+
+- PostgreSQL (recommended) or SQLite for development
+- Virtual environment (recommended)
 
-### Local Development
+### Setup
 
-1. Create a virtual environment:
+1. Clone the repository:
+   ```
+   git clone https://github.com/F-e-u-e-r/VBot.git
+   cd VBot
+   ```
+
+2. Create and activate a virtual environment:
    ```
    python -m venv venv
    source venv/bin/activate  # On Windows: venv\Scripts\activate
    ```
 
-2. Install dependencies:
+3. Install dependencies:
    ```
    pip install -r requirements.txt
    ```
 
-3. Create a `.env` file:
+4. Set up environment variables (create a `.env` file in the project root):
    ```
    FLASK_APP=run.py
    FLASK_ENV=development
    SECRET_KEY=your-secret-key
+   DATABASE_URL=postgresql://username:password@localhost/vbot
    ```
 
-4. Initialize the database:
+5. Initialize the database:
    ```
-   flask db init
-   flask db migrate -m "Initial migration"
    flask db upgrade
    ```
 
-5. Run the application:
+6. Run the application:
    ```
-   python run.py
-   ```
-
-### Docker Deployment
-
-1. Create `.env` file with required environment variables:
-   ```
-   POSTGRES_PASSWORD=your-secure-password
-   SECRET_KEY=your-secret-key
-   MAIL_SERVER=smtp.example.com
-   MAIL_PORT=587
-   MAIL_USERNAME=user@example.com
-   MAIL_PASSWORD=mail-password
-   MAIL_DEFAULT_SENDER=noreply@example.com
-   ADMIN_EMAIL=admin@example.com
+   flask run
    ```
 
-2. Build and start services:
+## User Management
+
+### Web Interface (Admin Only)
+
+1. Login with an admin account
+2. Click on the "User Management" link in the dropdown menu
+3. Use the interface to add or remove users
+
+### Command Line Scripts
+
+The application includes command-line scripts for user management:
+
+#### Add a User
+```
+python scripts/add_user.py --username johndoe --email john@example.com --role user
+```
+
+#### Remove a User
+```
+python scripts/remove_user.py --username johndoe
+```
+
+#### List Users
+```
+python scripts/list_users.py
+```
+
+## Docker Deployment
+
+A `Dockerfile` and `docker-compose.yml` are provided for containerized deployment.
+
+1. Build and start the containers:
    ```
    docker-compose up -d
    ```
 
-3. Initialize the database:
-   ```
-   docker-compose exec web flask db upgrade
-   ```
+2. The application will be available at `http://localhost:5001`
 
-4. Access the application at http://localhost (or your domain)
+## Production Deployment
 
-## Recent Improvements
+For production deployment, it's recommended to:
 
-- **Service Layer**: Added a service layer to separate business logic from presentation
-- **Enhanced Error Handling**: Improved error handling with centralized logging
-- **Docker Support**: Added Docker and docker-compose for easy deployment
-- **Code Organization**: Refactored code for better organization and maintainability
-- **Environment Configuration**: Enhanced configuration for development, testing, and production
-- **Security Headers**: Added security headers and content security policy
-- **Testing Support**: Improved testing infrastructure
+1. Use a proper WSGI server (Gunicorn is included in requirements)
+2. Set up Nginx as a reverse proxy
+3. Use a production-grade database
+4. Set up SSL/TLS
 
-## API Endpoints
-
-- `/tracking-tool` - File upload interface
-- `/tracking-data` - Display tracking data
-- `/api/tracking-data` - JSON API for tracking data
-
-## Security Features
-
-- CSRF protection
-- Content Security Policy
-- XSS protection headers
-- Rate limiting for login attempts
-- Account locking after multiple failed login attempts
-- Secure password storage with PBKDF2-SHA256
-- HTTPS enforcement in production
-
-## Contribution
-
-1. Clone the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+Example Gunicorn command:
+```
+gunicorn -w 4 -b 0.0.0.0:5001 run:app
+```
 
 ## License
 
@@ -146,6 +115,5 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 ## Acknowledgements
 
 - Flask and its extensions
-- Bootstrap for responsive UI
-- Pandas for data processing
-- Docker for containerization
+- Bootstrap for the UI
+- All other open-source libraries used in this project
