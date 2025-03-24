@@ -1,0 +1,47 @@
+# Flask and Extensions
+Flask==2.3.3
+Flask-Login==0.6.2
+Flask-SQLAlchemy==3.1.1
+Flask-Migrate==4.0.5
+Flask-WTF==1.2.1
+Flask-CORS==5.0.1
+Flask-APScheduler==1.12.4
+Flask-Limiter==3.5.0
+
+# Database
+SQLAlchemy==2.0.23
+psycopg2-binary==2.9.9
+alembic==1.12.1
+
+# Data Processing
+pandas==2.0.3
+numpy==1.24.4
+openpyxl==3.1.2
+xlrd==2.0.1
+tablib==3.5.0
+
+# Web Server
+gunicorn==21.2.0
+Werkzeug==2.3.7
+
+# AWS Integration
+boto3==1.28.62
+
+# Utilities
+python-dotenv==1.0.0
+email-validator==2.1.0
+pytz==2023.3.post1
+Pillow==10.0.1
+marshmallow==3.20.1
+itsdangerous==2.1.2
+
+# Testing
+pytest==7.4.2
+pytest-flask==1.3.0
+pytest-cov==4.1.0
+
+# Development Tools (not required in production)
+black==23.9.1 ; python_version >= "3.8"
+flake8==6.1.0
+pylint==3.0.2
+isort==5.12.0

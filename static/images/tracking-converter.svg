@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200">
+  <rect width="200" height="200" fill="#f8f9fa" rx="10" ry="10"/>
+  <g fill="#007bff">
+    <path d="M50,70 L150,70 L150,75 L50,75 Z"/>
+    <path d="M60,85 L140,85 L140,90 L60,90 Z"/>
+    <path d="M70,100 L130,100 L130,105 L70,105 Z"/>
+    <path d="M50,120 L150,120 L150,125 L50,125 Z"/>
+  </g>
+  <g fill="#6c757d">
+    <path d="M100,40 L120,60 L80,60 Z"/>
+    <path d="M100,160 L120,140 L80,140 Z"/>
+  </g>
+  <path d="M50,50 L60,50 L60,150 L50,150 Z" fill="#007bff"/>
+  <path d="M140,50 L150,50 L150,150 L140,150 Z" fill="#007bff"/>
+</svg>

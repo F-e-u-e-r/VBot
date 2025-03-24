@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}Home - VBot{% endblock %}
+
+{% block content %}
+<div class="content-container">
+    <div class="tools-grid">
+        <!-- First Grid Cell: Tracking Converter -->
+        <div class="tool-card tool-card-active">
+            <a href="{{ url_for('tracking_tool') }}" class="text-decoration-none">
+                <img src="{{ url_for('static', filename='images/tracking-converter.svg') }}" alt="Tracking Converter" class="tool-card-img">
+                <div class="tool-card-body">
+                    <h5 class="tool-card-title text-center">Tracking Converter</h5>
+                </div>
+            </a>
+        </div>
+        
+        <!-- Remaining Grid Cells: To be launched -->
+        {% for i in range(5) %}
+        <div class="tool-card tool-card-inactive">
+            <img src="{{ url_for('static', filename='images/to-be-launched.svg') }}" alt="To be launched" class="tool-card-img">
+            <div class="tool-card-body">
+                <h5 class="tool-card-title text-center">To be launched</h5>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
