@@ -151,4 +151,20 @@ All notable changes to this project will be documented in this file.
 - Dynamic table generation with copy-to-clipboard functionality
 - PostgreSQL database integration
 - Responsive design
-- AWS deployment configuration 
+- AWS deployment configuration
+
+## [Added] - 2024-[Current Date]
+- Added robots.txt file in static directory to control search engine crawlers
+  - Allows access to static resources and home page
+  - Restricts access to admin, login, user account areas, API endpoints, and uploads
+  - Includes crawl-delay directive and commented sitemap location
+- Updated robots.txt with domain-specific sitemap URL (vbot.autos)
+- Removed registration link from login page to prevent unauthorized account creation
+- Added add_user.py script for easy user management on production environment
+- Added remove_user.py script to delete users from the database
+- Added list_users.py script to display all users in tabular format
+- Added admin user management web interface 
+  - View all users in a table
+  - Add new users with specified roles
+  - Remove existing users
+  - Admin-only access with proper permission controls 

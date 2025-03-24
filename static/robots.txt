@@ -1,0 +1,16 @@
+User-agent: *
+Allow: /static/
+Allow: /
+Disallow: /admin/
+Disallow: /login/
+Disallow: /register/
+Disallow: /account/
+Disallow: /user/
+Disallow: /api/
+Disallow: /uploads/
+
+# Crawl-delay directive (in seconds)
+Crawl-delay: 10
+
+# Sitemap location
+Sitemap: https://vbot.autos/sitemap.xml 
