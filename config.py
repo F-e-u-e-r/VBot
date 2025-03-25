@@ -75,20 +75,30 @@ class TestingConfig(Config):
     TESTING = True
     DEBUG = True
     
-    # Use in-memory SQLite for testing
-    SQLALCHEMY_DATABASE_URI = os.environ.get('TEST_DATABASE_URL') or 'sqlite:///:memory:'
+    # Use a separate database for testing
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
+        'sqlite:///' + os.path.join(os.getcwd(), 'instance', 'testing.sqlite')
     
     # Disable CSRF for testing API endpoints
     WTF_CSRF_ENABLED = False
     
     # Use a test upload folder
-    UPLOAD_FOLDER = os.environ.get('TEST_UPLOAD_FOLDER') or os.path.join(os.getcwd(), 'tests', 'uploads')
+    UPLOAD_FOLDER = os.environ.get('UPLOAD_FOLDER') or os.path.join(os.getcwd(), 'uploads')
     
     # Disable rate limiting for tests
     RATELIMIT_ENABLED = False
     
     # Shorter session lifetime for testing
     PERMANENT_SESSION_LIFETIME = timedelta(minutes=5)
+    
+    # Testing URL
+    SERVER_NAME = "testing.vbot.autos"
+    
+    # Disable email sending in testing
+    MAIL_SUPPRESS_SEND = True
+    
+    # Testing-specific configuration
+    TESTING_BANNER = True
 
 class ProductionConfig(Config):
     """Configuration for production environment."""

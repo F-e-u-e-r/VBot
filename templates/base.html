@@ -71,6 +71,13 @@
     height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <!-- End Google Tag Manager (noscript) -->
     
+    <!-- Testing Environment Banner -->
+    {% if config.get('TESTING_BANNER', False) %}
+    <div class="alert alert-warning text-center mb-0 rounded-0" role="alert" style="position: sticky; top: 0; z-index: 1100;">
+        <strong>Testing Environment</strong> - This is not a production site. Data may be reset at any time.
+    </div>
+    {% endif %}
+    
     <!-- Header -->
     <header class="header">
         <div class="container">

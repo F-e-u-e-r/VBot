@@ -3,47 +3,47 @@
    services:
      web:
        build: .
-       container_name: vbot-web
+       container_name: vbot-testing-web
        restart: always
        ports:
-         - "5001:5001"
+         - "5002:5001"
        volumes:
          - ./static:/app/static
          - ./uploads:/app/uploads
          - ./logs:/app/logs
        environment:
          - FLASK_APP=run.py
-         - FLASK_ENV=production
-         - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD}@db:5432/vbot
+         - FLASK_ENV=testing
+         - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD}@db:5432/vbot_testing
          - SECRET_KEY=${SECRET_KEY}
-         - APP_NAME=VBot
-         - SERVER_NAME=vbot.autos
+         - APP_NAME=VBot Testing
+         - SERVER_NAME=testing.vbot.autos
        depends_on:
          - db
        networks:
-         - vbot-network
+         - vbot-testing-network
        command: >
          sh -c "flask db upgrade && 
-                gunicorn --bind 0.0.0.0:5001 --workers 4 --timeout 120 'app:create_app(\"production\")'"
+                gunicorn --bind 0.0.0.0:5001 --workers 2 --timeout 120 'app:create_app(\"testing\")'"
 
      db:
        image: postgres:14
-       container_name: vbot-db
+       container_name: vbot-testing-db
        restart: always
        environment:
          - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
          - POSTGRES_USER=postgres
-         - POSTGRES_DB=vbot
+         - POSTGRES_DB=vbot_testing
        volumes:
-         - postgres_data:/var/lib/postgresql/data
+         - postgres_testing_data:/var/lib/postgresql/data
        ports:
-         - "5432:5432"
+         - "5433:5432"
        networks:
-         - vbot-network
+         - vbot-testing-network
 
    networks:
-     vbot-network:
+     vbot-testing-network:
        driver: bridge
 
    volumes:
-     postgres_data:
+     postgres_testing_data:
