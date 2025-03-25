@@ -12,12 +12,18 @@
          - ./uploads:/app/uploads
          - ./logs:/app/logs
        environment:
-         - FLASK_APP=run.py
-         - FLASK_ENV=testing
-         - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD}@db:5432/vbot_testing
-         - SECRET_KEY=${SECRET_KEY}
-         - APP_NAME=VBot Testing
-         - SERVER_NAME=testing.vbot.autos
+        - FLASK_APP=run.py
+        - FLASK_ENV=testing
+        - FLASK_DEBUG=1 
+        - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD}@db:5432/vbot_testing
+        - SECRET_KEY=${SECRET_KEY}
+        - APP_NAME=VBot Testing
+        - SERVER_NAME=testing.vbot.autos
+        - PREFERRED_URL_SCHEME=https
+        - RATELIMIT_ENABLED=false  # Temporarily disable rate limiting
+        - PROXY_FIX=true
+        - BEHIND_PROXY=true
+        - WERKZEUG_DEBUG_PIN=off 
        depends_on:
          - db
        networks:

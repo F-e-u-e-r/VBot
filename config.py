@@ -75,30 +75,35 @@ class TestingConfig(Config):
     TESTING = True
     DEBUG = True
     
-    # Use a separate database for testing
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
-        'sqlite:///' + os.path.join(os.getcwd(), 'instance', 'testing.sqlite')
+    # Use PostgreSQL for testing
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
+    
+    # Security settings for HTTPS
+    SESSION_COOKIE_SECURE = True
+    REMEMBER_COOKIE_SECURE = True
+    SESSION_COOKIE_HTTPONLY = True
+    
+    # Server name and scheme
+    SERVER_NAME = "testing.vbot.autos"
+    PREFERRED_URL_SCHEME = "https"
     
     # Disable CSRF for testing API endpoints
     WTF_CSRF_ENABLED = False
     
     # Use a test upload folder
-    UPLOAD_FOLDER = os.environ.get('UPLOAD_FOLDER') or os.path.join(os.getcwd(), 'uploads')
+    UPLOAD_FOLDER = os.path.join(os.getcwd(), 'uploads')
     
     # Disable rate limiting for tests
     RATELIMIT_ENABLED = False
     
     # Shorter session lifetime for testing
     PERMANENT_SESSION_LIFETIME = timedelta(minutes=5)
-    
-    # Testing URL
-    SERVER_NAME = "testing.vbot.autos"
-    
-    # Disable email sending in testing
-    MAIL_SUPPRESS_SEND = True
-    
-    # Testing-specific configuration
-    TESTING_BANNER = True
+
+    @staticmethod
+    def init_app(app):
+        Config.init_app(app)
+        # Add testing-specific initialization here
+        app.config['TESTING_BANNER'] = True
 
 class ProductionConfig(Config):
     """Configuration for production environment."""
