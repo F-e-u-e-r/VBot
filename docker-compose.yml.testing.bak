@@ -1,0 +1,55 @@
+   version: '3.8'
+
+   services:
+     web:
+       build: .
+       container_name: vbot-testing-web
+       restart: always
+       ports:
+         - "5002:5001"
+       volumes:
+         - ./static:/app/static
+         - ./uploads:/app/uploads
+         - ./logs:/app/logs
+       environment:
+        - FLASK_APP=run.py
+        - FLASK_ENV=testing
+        - FLASK_DEBUG=1 
+        - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD}@db:5432/vbot_testing
+        - SECRET_KEY=${SECRET_KEY}
+        - APP_NAME=VBot Testing
+        - SERVER_NAME=testing.vbot.autos
+        - PREFERRED_URL_SCHEME=https
+        - RATELIMIT_ENABLED=false  # Temporarily disable rate limiting
+        - PROXY_FIX=true
+        - BEHIND_PROXY=true
+        - WERKZEUG_DEBUG_PIN=off 
+       depends_on:
+         - db
+       networks:
+         - vbot-testing-network
+       command: >
+         sh -c "flask db upgrade && 
+                gunicorn --bind 0.0.0.0:5001 --workers 2 --timeout 120 'app:create_app(\"testing\")'"
+
+     db:
+       image: postgres:14
+       container_name: vbot-testing-db
+       restart: always
+       environment:
+         - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+         - POSTGRES_USER=postgres
+         - POSTGRES_DB=vbot_testing
+       volumes:
+         - postgres_testing_data:/var/lib/postgresql/data
+       ports:
+         - "5433:5432"
+       networks:
+         - vbot-testing-network
+
+   networks:
+     vbot-testing-network:
+       driver: bridge
+
+   volumes:
+     postgres_testing_data:

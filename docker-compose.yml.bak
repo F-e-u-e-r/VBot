@@ -14,7 +14,6 @@ services:
     environment:
       - FLASK_APP=run.py
       - FLASK_ENV=production
-      - CONFIG_NAME=production
       - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD}@db:5432/vbot
       - SECRET_KEY=${SECRET_KEY}
       - APP_NAME=VBot
@@ -27,8 +26,8 @@ services:
     networks:
       - vbot-network
     command: >
-      sh -c "gunicorn --bind 0.0.0.0:5001 --workers 2 --timeout 120 'app:create_app(\"production\")'"
-
+      sh -c "flask db upgrade && 
+             gunicorn --bind 0.0.0.0:5001 --workers 2 --timeout 120 'app:create_app()'"
 
   db:
     image: postgres:14
